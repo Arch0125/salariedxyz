@@ -10,12 +10,7 @@ const Organization = () => {
 
     console.log(signer);
 
-    const ApproveDAI = async () => {
-        const sf = await Framework.create({
-            chainId : 80001,
-            provider : provider
-        })
-    }
+    
 
     return ( 
         <div className='flex flex-col w-screen h-screen bg-slate-900 items-center justify-center text-white' >
