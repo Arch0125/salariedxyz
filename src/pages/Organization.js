@@ -1,9 +1,21 @@
 import React from 'react';
 import { Framework } from '@superfluid-finance/sdk-core';
+import UseProvider from '../hooks/GetProvider';
+import GetSigner from '../hooks/GetSigner';
 
 const Organization = () => {
 
+    const provider = UseProvider();
+    const signer = GetSigner();
 
+    console.log(signer);
+
+    const ApproveDAI = async () => {
+        const sf = await Framework.create({
+            chainId : 80001,
+            provider : provider
+        })
+    }
 
     return ( 
         <div className='flex flex-col w-screen h-screen bg-slate-900 items-center justify-center text-white' >

@@ -1,4 +1,5 @@
 import React from 'react';
+import Framework from '@superfluid-finance/sdk-core';
 
 const Homepage = () => {
     return ( 
