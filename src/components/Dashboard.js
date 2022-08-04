@@ -2,10 +2,11 @@ import React from 'react';
 import { useState } from 'react';
 import Funds from './Funds';
 import Streams from './Streams';
+import Details from './Details';
 
 const Dashboard = () => {
 
-    const[choice,setChoice]=useState(3);
+    const[choice,setChoice]=useState(1);
 
     return ( 
         <>
@@ -44,7 +45,7 @@ const Dashboard = () => {
         </div>
         <div className='flex flex-row w-[80%] h-fit justify-between mt-5' >
         {
-            choice===0?<p className='mt-14 text-3xl font-bold'>Click on any button to get started</p>:choice===1?<p>DAO Info</p>:choice===2?<Funds/>:<Streams/>
+            choice===0?<p className='mt-14 text-3xl font-bold'>Click on any button to get started</p>:choice===1?<Details/>:choice===2?<Funds/>:<Streams/>
         }
         </div>
         </>

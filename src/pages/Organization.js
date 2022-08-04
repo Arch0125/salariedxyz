@@ -8,8 +8,6 @@ import GetContract from '../hooks/GetContract';
 import { DAIaddr } from '../common';
 import { daiABI } from '../contracts/artifacts/contracts/DAI.sol/DAI';
 import { ethers } from 'ethers';
-import Wrapper from '../components/Wrapper';
-import Unwrapper from '../components/Unwrapper';
 import Dashboard from '../components/Dashboard';
 
 const Organization = () => {
