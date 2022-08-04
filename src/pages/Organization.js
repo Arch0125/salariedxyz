@@ -20,7 +20,7 @@ const Organization = () => {
 
 
     return ( 
-        <div className='flex flex-col w-screen h-screen bg-slate-900 items-center justify-center text-white' >
+        <div className='flex flex-col w-screen h-screen bg-gradient-to-b from-black via-gray-900 to-gray-900 items-center justify-center text-white' >
             <Dashboard/>
         </div>
      );
