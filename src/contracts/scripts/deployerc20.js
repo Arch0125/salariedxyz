@@ -8,12 +8,12 @@ const hre = require("hardhat");
 
 async function main() {
 
-  const ERCStream = await hre.ethers.getContractFactory("ERCStream");
-  const ercstream = await ERCStream.deploy("0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9");
+  const MyToken = await hre.ethers.getContractFactory("MyToken");
+  const mytoken = await MyToken.deploy("USDC","USDC");
 
-  await ercstream.deployed();
+  await mytoken.deployed();
 
-  console.log("loanContract deployed to :", ercstream.address);
+  console.log("MyToken deployed to:", mytoken.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

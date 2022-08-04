@@ -75,13 +75,14 @@ contract ERCStream {
         orgbalance[msg.sender] -= amount;
     }
 
-    function createStream(address sender, address recepient, address tokenAddress, uint256 amount, uint256 timeframe)returns(uint256){
+    function createStream(address sender, address recepient, address tokenAddress, uint256 amount, uint256 timeframe) public returns(Stream memory){
         streamid++;
         require(sender != recepient, 'You cant stream to yourself');
-        require(sender == address(this), 'Only the vault contract can stream');
         require(orgbalance[msg.sender] != 0, 'Balance cant be zero');
         require(orgbalance[msg.sender] >= amount, 'Vault balance must be reateer than the streaming amount');
-        streams[streamid]=Stream(sender,recepient,tokenAddress,amount,0,timeframe);
+        uint256 rate = (amount * 1e18 )/2629743;
+        streams[streamid]=Stream(sender,recepient,tokenAddress,amount,rate,timeframe);
+        return streams[streamid];
     }
 
     function getStreamBalance(uint256 _streamid)public view returns(uint256){
@@ -89,19 +90,26 @@ contract ERCStream {
         uint256 starttime = streams[_streamid].timeframe;
         uint256 currenttime = block.timestamp;
         uint256 timepassed = currenttime - starttime;
-        uint256 balance = timepassed * rate;
+        uint256 balance = 2629743 * rate;
         return balance;
     }
 
-    function withdrawStream(uint256 _streamid)public view returns(uint256){
+    function withdrawStream(uint256 _streamid)public payable returns(uint256){
         uint256 balance = getStreamBalance(_streamid);
         require(balance != 0,'Cant withdraw zero amount');
         token.transfer(msg.sender, balance);
         streams[_streamid].amount-=balance;
-        orgbalance[streams[_streamid].owner]-=balance;
+        orgbalance[streams[_streamid].sender]-=balance;
+        return balance;
     }
 
-    function getStream(uint256 _id)public view returns(Stream){
+    function spendFromStream(uint256 _streamid, uint256 withdraw) public {
+        uint256 balance = getStreamBalance(_streamid);
+        require(withdraw >= balance, 'Withdraw amount cannot be more than Balance');
+
+    }
+
+    function getStream(uint256 _id)public view returns(Stream memory){
         return streams[_id];
     }
 }
