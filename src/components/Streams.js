@@ -10,23 +10,44 @@ import {
     MenuDivider,
     Button,
   } from '@chakra-ui/react'
+  import GetAccount from '../hooks/GetAccount';
+  import GetContract from '../hooks/GetContract';
+  import LoanVaultABI from '../ABIs/LoanVaultABI.json';
+import { Contract, ethers } from 'ethers';
+  
 
 const Streams = () => {
 
     const[duration,setDuration]=React.useState('');
     const[token,setToken]=React.useState('Choose Token');
+    const[recipient,setRecipient]=React.useState('');
+    const[amount,setAmount]=React.useState('');
+    const account = GetAccount();
+    const LoanVault = GetContract('0xbd50d056C68f3eB3fe807A45ACF3c955C12695B9',LoanVaultABI);
+
+    var time = (((new Date()).getTime()).toString().slice(0, -3));
+
+    const addStream = async () => {
+        const tx = await LoanVault.createStream(account.toString(),ethers.utils.getAddress(recipient),'0xE562db698CcE116169813d531e8C03A23276315c',amount,time);
+        console.log(tx);
+    }
+
+    
 
     return ( 
         <div className='flex flex-row w-full h-fit justify-between mt-14' >
             <div className='flex flex-col bg-white w-[48%] h-fit p-5 text-slate-900 rounded-xl' >
                 <p className='text-xl font-bold' >Create new stream</p>
                 <hr className='mt-2 mb-2' />
-                <p className='text-lg font-medium'>Recipient Address</p>
-                <input className='text-black p-2 rounded-xl bg-slate-200' />
+                <p className='text-lg font-medium'  >Recipient Address</p>
+                <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>setRecipient(e.target.value)} />
+                <p>{recipient}</p>
+                <p className='text-lg font-medium' >Amount</p>
+                <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>setAmount(e.target.value)}  />
                 <div className='flex flex-row justify-between mt-4' >
                 <Menu>
                 <MenuButton as={Button} width={'33%'} paddingX={"50px"} >
-                    <label>{duration} Duration</label>
+                    <label>Duration</label>
                     
                 </MenuButton>
                 <MenuList>
@@ -49,7 +70,7 @@ const Streams = () => {
                 <div className='flex flex-row items-center justify-center bg-slate-200 text-md font-semibold rounded-md w-[30%]' >Stream Rate</div>
                 </div>
                 <button className='flex w-full h-fit items-center justify-center bg-slate-900 text-white py-2 mt-3 rounded-xl' >Approve ERC20 Spend</button>
-                <button className='flex w-full h-fit items-center justify-center bg-slate-900 text-white py-2 mt-3 rounded-xl' >Create Stream</button>
+                <button className='flex w-full h-fit items-center justify-center bg-slate-900 text-white py-2 mt-3 rounded-xl' onClick={()=>addStream()} >Create Stream</button>
             </div>
             <div className='flex flex-col bg-white w-[45%] rounded-xl p-5 h-fit overflow-scroll' >
                 <p className='text-xl text-slate-900 font-bold' >Current Streams</p>

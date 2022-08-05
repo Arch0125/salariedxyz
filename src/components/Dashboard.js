@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Funds from './Funds';
 import Streams from './Streams';
 import Details from './Details';
+import GetAccount from '../hooks/GetAccount';
+import GetContract from '../hooks/GetContract';
+import { daiABI } from '../contracts/artifacts/contracts/DAI.sol/DAI.js';
 
 const Dashboard = () => {
 
-    const[choice,setChoice]=useState(1);
+    const[choice,setChoice]=useState(3);
+    const[bal,setBal]=useState('');
+    const account = GetAccount();
+    const DAI = GetContract('0xE562db698CcE116169813d531e8C03A23276315c',daiABI);
+
+    const checkBalance = async () => {
+        const balance = await DAI.balanceOf(account);
+        setBal(balance.toString());
+    }
+
+    checkBalance();
+
 
     return ( 
         <>
@@ -28,7 +42,7 @@ const Dashboard = () => {
                 <p className='text-xl font-semibold' >Total Value Locked</p>
                 <hr className='mt-2' />
                 <p className='font-medium mt-2'>USDC : 10000</p>
-                <p className='font-medium'>DAI : 5000</p>
+                <p className='font-medium'>DAI : {bal.slice(0,-18)}</p>
                 <p className='font-medium'>MATIC : 5000</p>
                 <hr className='mt-2' />
                 <button className='w-full h-fit p-2 mt-2 bg-slate-900 text-white rounded-xl' onClick={()=>setChoice(2)} >Add Funds</button>

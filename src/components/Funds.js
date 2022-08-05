@@ -16,30 +16,25 @@ import GetContract from '../hooks/GetContract.js';
 import { daiABI } from '../contracts/artifacts/contracts/DAI.sol/DAI.js';
 import GetAccount from '../hooks/GetAccount.js';
 import LoanVaultABI from '../ABIs/LoanVaultABI.json';
-import bigNumber from 'big-number';
-import BigNumber from 'big-number/big-number.js';
 import { ethers } from 'ethers';
 
 const Funds = () => {
 
     const account = GetAccount();
 
+    var BigNumber = require('big-number');
+
     const[token,setToken]=useState('Choose Token');
     const[amount,setAmount]=useState('');
-    console.log(tokens.DAI.image)
     const DAI = GetContract('0xE562db698CcE116169813d531e8C03A23276315c',daiABI);
-    const LoanVault = GetContract('0x3468e5b5d9e1D31afF9CF4a53F4D81C71feDA2e8',LoanVaultABI);
-
-    console.log(DAI);
+    const LoanVault = GetContract('0xbd50d056C68f3eB3fe807A45ACF3c955C12695B9',LoanVaultABI);
 
     const approve = async () => {
-        var amt = ethers.BigNumber.from(amount);
-        console.log(amt);
-        await DAI.approve('0x3468e5b5d9e1D31afF9CF4a53F4D81C71feDA2e8',amt);
+        await DAI.approve('0xbd50d056C68f3eB3fe807A45ACF3c955C12695B9',ethers.utils.parseEther(amount));
     }
 
     const addfunds = async () => {
-        await LoanVault.addFund(amount.toString());
+        await LoanVault.addFund(amount);
     }
 
     return ( 
@@ -67,7 +62,7 @@ const Funds = () => {
                 </MenuList>
                 </Menu>
                 <hr className='mt-2' />
-                <input className='w-full p-2 border-slate-900 border-2 border-opacity-25 rounded-2xl' onClick={(e)=>setAmount(e.target.value)} />
+                <input className='w-full p-2 border-slate-900 border-2 border-opacity-25 rounded-2xl' onChange={(e)=>setAmount(e.target.value)} />
                 <button className='w-full h-fit p-2 bg-slate-900 text-white font-semibold mt-2 rounded-xl' onClick={()=>approve()} >Approve DAI spent</button>
                 <button className='w-full h-fit p-2 bg-slate-900 text-white font-semibold mt-2 rounded-xl' onClick={()=>addfunds()}>Add Funds</button>
             </div>
