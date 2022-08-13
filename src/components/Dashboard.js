@@ -6,6 +6,7 @@ import Details from './Details';
 import GetAccount from '../hooks/GetAccount';
 import GetContract from '../hooks/GetContract';
 import { daiABI } from '../contracts/artifacts/contracts/DAI.sol/DAI.js';
+import LoanVaultABI from '../ABIs/LoanVaultABI.json';
 
 const Dashboard = () => {
 
@@ -13,10 +14,13 @@ const Dashboard = () => {
     const[bal,setBal]=useState('');
     const account = GetAccount();
     const DAI = GetContract('0xE562db698CcE116169813d531e8C03A23276315c',daiABI);
+    const LoanVault = GetContract('0x1D776c3E4F5D8442CD066947FBD117EB08AB72BB',LoanVaultABI);
+
 
     const checkBalance = async () => {
-        const balance = await DAI.balanceOf(account);
+        const balance = await LoanVault.getFund(account);
         setBal(balance.toString());
+        console.log(balance);
     }
 
     checkBalance();
