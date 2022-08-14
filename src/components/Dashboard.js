@@ -12,6 +12,7 @@ const Dashboard = () => {
 
     const[choice,setChoice]=useState(3);
     const[bal,setBal]=useState('');
+    const[daoname,setDaoName]=useState('');
     const account = GetAccount();
     const DAI = GetContract('0xE562db698CcE116169813d531e8C03A23276315c',daiABI);
     const LoanVault = GetContract('0x1D776c3E4F5D8442CD066947FBD117EB08AB72BB',LoanVaultABI);
@@ -23,7 +24,14 @@ const Dashboard = () => {
         console.log(balance);
     }
 
+    const getName = async()=>{
+        const orgname = await LoanVault.getName();
+        console.log(orgname);
+        setDaoName(orgname);
+    }
+
     checkBalance();
+    getName();
 
 
     return ( 
@@ -36,7 +44,7 @@ const Dashboard = () => {
             <div className='flex flex-col w-[30%] bg-white rounded-xl h-full p-5 text-slate-900 '>
                 <p className='text-xl font-semibold' >DAO/Organization Info</p>
                 <hr className='mt-2' />
-                <p className='font-medium mt-2'>Name : </p>
+                <p className='font-medium mt-2'>Name : {daoname}</p>
                 <p className='font-medium'>Stream Admin : </p>
                 <p className='font-medium'>Members Streamed : </p>
                 <hr className='mt-2' />
@@ -45,9 +53,9 @@ const Dashboard = () => {
             <div className='flex flex-col w-[30%] bg-white rounded-xl h-full p-5 text-slate-900 '>
                 <p className='text-xl font-semibold' >Total Value Locked</p>
                 <hr className='mt-2' />
-                <p className='font-medium mt-2'>USDC : 10000</p>
+                <p className='font-medium mt-2'>USDC : --</p>
                 <p className='font-medium'>DAI : {bal.slice(0,-18)}</p>
-                <p className='font-medium'>MATIC : 5000</p>
+                <p className='font-medium'>MATIC : --</p>
                 <hr className='mt-2' />
                 <button className='w-full h-fit p-2 mt-2 bg-slate-900 text-white rounded-xl' onClick={()=>setChoice(2)} >Add Funds</button>
             </div>
