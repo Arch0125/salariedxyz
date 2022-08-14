@@ -13,6 +13,7 @@ const Dashboard = () => {
     const[choice,setChoice]=useState(3);
     const[bal,setBal]=useState('');
     const[daoname,setDaoName]=useState('');
+    const[streamCount,setStreamCount]=useState('');
     const account = GetAccount();
     const DAI = GetContract('0xE562db698CcE116169813d531e8C03A23276315c',daiABI);
     const LoanVault = GetContract('0x1D776c3E4F5D8442CD066947FBD117EB08AB72BB',LoanVaultABI);
@@ -30,8 +31,15 @@ const Dashboard = () => {
         setDaoName(orgname);
     }
 
+    const getstreamCount=async()=>{
+        const count = await LoanVault.getOrgCount(account);
+        setStreamCount(count.toString());
+        console.log(count);
+    }
+
     checkBalance();
     getName();
+    getstreamCount();
 
 
     return ( 
@@ -62,9 +70,9 @@ const Dashboard = () => {
             <div className='flex flex-col w-[30%] bg-white rounded-xl h-full p-5 text-slate-900 '>
                 <p className='text-xl font-semibold' >Streams Info</p>
                 <hr className='mt-2' />
-                <p className='font-medium mt-2'>Total Streams : 12</p>
-                <p className='font-medium'>Ongoing Streams : 8</p>
-                <p className='font-medium'>Finished Streams : 8</p>
+                <p className='font-medium mt-2'>Total Streams : {streamCount}</p>
+                <p className='font-medium'>Ongoing Streams : --</p>
+                <p className='font-medium'>Finished Streams : --</p>
                 <hr className='mt-2' />
                 <button className='w-full h-fit p-2 mt-2 bg-slate-900 text-white rounded-xl' onClick={()=>setChoice(3)} >History Book</button>
             </div>
