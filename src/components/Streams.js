@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Menu,
     MenuButton,
@@ -18,12 +18,14 @@ import { Contract, ethers } from 'ethers';
 
 const Streams = () => {
 
-    const[duration,setDuration]=React.useState('');
+    const[duration,setDuration]=React.useState('Duration');
     const[token,setToken]=React.useState('Choose Token');
     const[recipient,setRecipient]=React.useState('');
     const[amount,setAmount]=React.useState('');
+    const[rate,setRate]=React.useState(0);
+    const[streams,setStreams]=React.useState([]);
     const account = GetAccount();
-    const LoanVault = GetContract('0xbd50d056C68f3eB3fe807A45ACF3c955C12695B9',LoanVaultABI);
+    const LoanVault = GetContract('0x1D776c3E4F5D8442CD066947FBD117EB08AB72BB',LoanVaultABI);
 
     var time = (((new Date()).getTime()).toString().slice(0, -3));
 
@@ -32,6 +34,19 @@ const Streams = () => {
         console.log(tx);
     }
 
+    var showStream = async () => {
+        var listcount = await LoanVault.getCount();
+        listcount = listcount.toString();
+        setStreams([]);
+        for(let i=1;i<=listcount;i++){
+            var stream = await LoanVault.getStream(i);
+            if(account.toString() == stream.sender){
+                setStreams((streams)=>[...streams,stream])
+            }
+        }
+        console.log(streams);
+        showStream=function(){};
+    }
     
 
     return ( 
@@ -43,17 +58,17 @@ const Streams = () => {
                 <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>setRecipient(e.target.value)} />
                 <p>{recipient}</p>
                 <p className='text-lg font-medium' >Amount</p>
-                <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>setAmount(e.target.value)}  />
+                <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>{setAmount(e.target.value);setRate(e.target.value / 2629743)}}  />
                 <div className='flex flex-row justify-between mt-4' >
                 <Menu>
                 <MenuButton as={Button} width={'33%'} paddingX={"50px"} >
-                    <label>Duration</label>
+                    <label>{duration}</label>
                     
                 </MenuButton>
                 <MenuList>
-                    <MenuItem onChange={()=>setDuration(1)} >1 Month</MenuItem>
-                    <MenuItem onChange={()=>setDuration(2)} >2 Months</MenuItem>
-                    <MenuItem onChange={()=>setDuration(2)} >3 Months</MenuItem>
+                    <MenuItem onClick={(e)=>setDuration('1 Month')} >1 Month</MenuItem>
+                    <MenuItem onClick={(e)=>setDuration('2 Months')} >2 Months</MenuItem>
+                    <MenuItem onClick={(e)=>setDuration('3 Months')} >3 Months</MenuItem>
                 </MenuList>
                 </Menu>
                 <Menu>
@@ -67,19 +82,23 @@ const Streams = () => {
                     <MenuItem onClick={()=>setToken('MATIC')}><img src='https://cryptologos.cc/logos/polygon-matic-logo.svg?v=023' className='w-5 mr-2 mt-1' />MATIC</MenuItem>
                 </MenuList>
                 </Menu>
-                <div className='flex flex-row items-center justify-center bg-slate-200 text-md font-semibold rounded-md w-[30%]' >Stream Rate</div>
+                <div className='flex flex-row items-center justify-center bg-slate-200 text-md font-semibold rounded-md w-[30%]' >{
+                    rate===0?<p>Stream Rate</p>:<p>{(rate).toFixed(8)} DAI/s</p>
+                }</div>
                 </div>
-                <button className='flex w-full h-fit items-center justify-center bg-slate-900 text-white py-2 mt-3 rounded-xl' >Approve ERC20 Spend</button>
                 <button className='flex w-full h-fit items-center justify-center bg-slate-900 text-white py-2 mt-3 rounded-xl' onClick={()=>addStream()} >Create Stream</button>
             </div>
             <div className='flex flex-col bg-white w-[45%] rounded-xl p-5 h-fit overflow-scroll' >
                 <p className='text-xl text-slate-900 font-bold' >Current Streams</p>
+                <button className='flex w-full h-fit items-center justify-center bg-slate-900 text-white py-2 mt-3 rounded-xl' onClick={()=>showStream()} >Show Streams</button>
                 <hr className='mt-2 border-slate-900' />
-                <div className='flex flex-row w-full h-fit p-3 bg-slate-100 my-2 rounded-xl text-black justify-between items-center' >
-                    <label>0xA45DF...3ER4D</label>
-                    <label>1000DAI</label>
-                    <button className='h-fit w-fit p-2 bg-black text-white rounded-md' >Edit</button>
-                </div>
+                {Object.keys(streams).map((stream,index)=>(
+                    <div className='flex flex-row w-full h-fit p-3 bg-slate-100 my-2 rounded-xl text-black justify-between items-center' >
+                        <label>{(streams[index].recipient).toString().substring(0,8)}...{(streams[index].recipient).toString().substring(38)}</label>
+                        <label>{(streams[index].amount).toString()} DAI</label>
+                        <button className='h-fit w-fit p-2 bg-black text-white rounded-md' >Edit</button>
+                    </div>
+                ))}
             </div>
         </div>
      );

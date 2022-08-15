@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-contract ERCStream {
+contract Vault {
     IERC20 public immutable token;
 
     uint public totalSupply;
+    uint256 timepass;
     mapping(address => uint) public balanceOf;
 
     constructor(address _token) {
@@ -25,61 +26,26 @@ contract ERCStream {
     mapping(uint256 => Stream) public streams;
     mapping(address => uint256) public orgbalance;
 
-    function _mint(address _to, uint _shares) private {
-        totalSupply += _shares;
-        balanceOf[_to] += _shares;
+    function addFund(uint _amount)public{
+        _amount*=1e18;
+        token.transferFrom(msg.sender,address(this),_amount);
+        totalSupply+=_amount;
+        balanceOf[msg.sender]+=_amount;
+        orgbalance[msg.sender]+=_amount;
     }
 
-    function _burn(address _from, uint _shares) private {
-        totalSupply -= _shares;
-        balanceOf[_from] -= _shares;
-    }
-
-    function deposit(uint _amount) external {
-        /*
-        a = amount
-        B = balance of token before deposit
-        T = total supply
-        s = shares to mint
-
-        (T + s) / T = (a + B) / B 
-
-        s = aT / B
-        */
-        uint shares;
-        if (totalSupply == 0) {
-            shares = _amount;
-        } else {
-            shares = (_amount * totalSupply) / token.balanceOf(address(this));
-        }
-
-        _mint(msg.sender, shares);
-        token.transferFrom(msg.sender, address(this), _amount);
-        orgbalance[msg.sender] += _amount;
-    }
-
-    function withdraw(uint _shares) internal {
-        /*
-        a = amount
-        B = balance of token before withdraw
-        T = total supply
-        s = shares to burn
-
-        (T - s) / T = (B - a) / B 
-
-        a = sB / T
-        */
-        uint amount = (_shares * token.balanceOf(address(this))) / totalSupply;
-        _burn(msg.sender, _shares);
-        token.transfer(msg.sender, amount);
-        orgbalance[msg.sender] -= amount;
+    function withdrawFund(uint _amount)public{
+        _amount*=1e18;
+        totalSupply-=_amount;
+        balanceOf[msg.sender]-=_amount;
+        token.transfer(msg.sender,_amount);
     }
 
     function createStream(address sender, address recepient, address tokenAddress, uint256 amount, uint256 timeframe) public returns(Stream memory){
         streamid++;
         require(sender != recepient, 'You cant stream to yourself');
-        require(orgbalance[msg.sender] != 0, 'Balance cant be zero');
-        require(orgbalance[msg.sender] >= amount, 'Vault balance must be reateer than the streaming amount');
+        require(balanceOf[msg.sender] != 0, 'Balance cant be zero');
+        require(balanceOf[msg.sender] >= amount, 'Vault balance must be reateer than the streaming amount');
         uint256 rate = (amount * 1e18 )/2629743;
         streams[streamid]=Stream(sender,recepient,tokenAddress,amount,rate,timeframe);
         return streams[streamid];
@@ -90,31 +56,47 @@ contract ERCStream {
         uint256 starttime = streams[_streamid].timeframe;
         uint256 currenttime = block.timestamp;
         uint256 timepassed = currenttime - starttime;
-        uint256 balance = 2629743 * rate;
+        uint256 balance = timepassed * rate;
         return balance;
     }
 
-    function withdrawStream(uint256 _streamid)public payable returns(uint256){
-        uint256 balance = getStreamBalance(_streamid);
-        require(balance != 0,'Cant withdraw zero amount');
-        token.transfer(msg.sender, balance);
-        streams[_streamid].amount-=balance;
-        orgbalance[streams[_streamid].sender]-=balance;
-        return balance;
+    function withdrawStream(uint _streamid)public {
+        require(msg.sender == streams[_streamid].recipient, 'only recipient can call the function');
+        uint rate = streams[_streamid].rate;
+        uint256 starttime = streams[_streamid].timeframe;
+        uint256 currenttime = block.timestamp;
+        uint256 timepassed = currenttime - starttime;
+        uint withdraw = rate * timepassed;
+        token.transfer(msg.sender, rate * timepassed);
+        totalSupply-=withdraw;
+        orgbalance[msg.sender]-=withdraw;
+        streams[_streamid].timeframe=block.timestamp;
     }
 
-    function spendFromStream(uint256 _streamid, uint256 withdraw) public {
-        uint256 balance = getStreamBalance(_streamid);
-        require(withdraw >= balance, 'Withdraw amount cannot be more than Balance');
-
+    function withdrawFromStream(uint _streamid)public{
+        require(msg.sender == streams[_streamid].recipient, 'only recipient can call the function');
+        uint256 rate = streams[_streamid].rate;
+        uint256 starttime = streams[_streamid].timeframe;
+        uint256 timepass = block.timestamp - starttime;
+        token.transfer(msg.sender, rate*timepass);
+        totalSupply-=rate*timepass;
+        orgbalance[streams[_streamid].sender]-=rate*timepass;
+        streams[_streamid].amount -= rate * timepass;
     }
 
-    function getStream(uint256 _id)public view returns(Stream memory){
-        return streams[_id];
+    function sendFromStream(uint _withdraw,uint _streamid)public{
+        _withdraw*=1e18;
+        require(_withdraw<(streams[_streamid].amount)/2);
+        token.transfer(msg.sender,_withdraw);
+        uint256 currenttime = block.timestamp;
+        streams[_streamid].timeframe=currenttime;
+        streams[_streamid].rate = ((streams[_streamid].amount-_withdraw) * 1e18 )/2629743;
+        totalSupply-=_withdraw;
+        orgbalance[streams[_streamid].sender]-=_withdraw;
     }
+    
 }
-
-interface IERC20 {
+ interface IERC20 {
     function totalSupply() external view returns (uint);
 
     function balanceOf(address account) external view returns (uint);

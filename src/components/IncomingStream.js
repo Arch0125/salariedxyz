@@ -2,21 +2,17 @@ import React from 'react';
 
 const IncomingStream = () => {
     return ( 
-        <div className='flex flex-col w-[60%] h-[45%] ml-14 mt-10 bg-slate-100 rounded-xl p-12' >
+        <div className='flex flex-col w-full h-[45%] ml-14 mt-10 bg-slate-100 rounded-xl p-12' >
             <div className='w-full flex flex-row justify-between items-end '>
             <p className='text-xl text-slate-900 font-semibold' >Incoming streams</p>
             </div>
             <hr className='mt-2 mb-2 border-slate-900' />
-            <table className='w-full border-collapse border-slate-900'>
-                <thead className='bg-slate-200  ' >
-                    <tr className='p-3' >
-                        <th className='text-lg font-normal' >Stream Admin</th>
-                        <th className='text-lg font-normal' >Stream Status</th>
-                        <th className='text-lg font-normal' >Stream Date</th>
-                        <th className='text-lg font-normal' >Stream Amount</th>
-                    </tr>
-                </thead>
-            </table>
+            <div className='flex  flex-row w-full h-fit p-3 bg-slate-200 rounded-xl justify-between items-center text-slate-900 ' >
+                <label className='text-lg font-medium' >0X1QDEF...DWFEF</label>
+                <label className='text-lg font-medium' >→</label>
+                <label className='text-lg font-medium' >1000 DAI</label>
+                <label className='bg-green-800 text-white px-3 text-md py-1 rounded-xl' >Live</label>
+            </div>
         </div>
      );
 }
