@@ -5,7 +5,7 @@ import Streams from './Streams';
 import Details from './Details';
 import GetAccount from '../hooks/GetAccount';
 import GetContract from '../hooks/GetContract';
-import { daiABI } from '../contracts/artifacts/contracts/DAI.sol/DAI.js';
+import { daiABI } from './DAIABI';
 import LoanVaultABI from '../ABIs/LoanVaultABI.json';
 
 const Dashboard = () => {

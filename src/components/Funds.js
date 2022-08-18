@@ -13,7 +13,7 @@ import {
 import { useState } from 'react';
 import {tokens} from '../tokens.js'
 import GetContract from '../hooks/GetContract.js';
-import { daiABI } from '../contracts/artifacts/contracts/DAI.sol/DAI.js';
+import { daiABI } from './DAIABI.js';
 import GetAccount from '../hooks/GetAccount.js';
 import LoanVaultABI from '../ABIs/LoanVaultABI.json';
 import { ethers } from 'ethers';
