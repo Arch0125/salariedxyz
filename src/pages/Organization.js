@@ -6,7 +6,6 @@ import GetAccount from '../hooks/GetAccount';
 import { useState } from 'react';
 import GetContract from '../hooks/GetContract';
 import { DAIaddr } from '../common';
-import { daiABI } from '../contracts/artifacts/contracts/DAI.sol/DAI';
 import { ethers } from 'ethers';
 import Dashboard from '../components/Dashboard';
 
