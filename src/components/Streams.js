@@ -56,7 +56,6 @@ const Streams = () => {
                 <hr className='mt-2 mb-2' />
                 <p className='text-lg font-medium'  >Recipient Address</p>
                 <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>setRecipient(e.target.value)} />
-                <p>{recipient}</p>
                 <p className='text-lg font-medium' >Amount</p>
                 <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>{setAmount(e.target.value);setRate(e.target.value / 2629743)}}  />
                 <div className='flex flex-row justify-between mt-4' >
