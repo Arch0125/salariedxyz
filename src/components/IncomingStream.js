@@ -7,32 +7,36 @@ import GetAccount from '../hooks/GetAccount';
 const IncomingStream = () => {
 
     const account = GetAccount();
-    const LoanVault = GetContract('0x1D776c3E4F5D8442CD066947FBD117EB08AB72BB',LoanVaultABI);
+    const LoanVault = GetContract('0x7Ed7C2792a5BC22E11375ACE1E51314a6dd16682',LoanVaultABI);
     const[streams,setStreams]=useState([]);
+    const[streamid,setStreamid]=useState('');
     const[streamCount,setStreamCount]=useState('');
+    const[prevAccount,setPrevAccount]=useState('');
 
     useEffect(()=>{
         if(streamCount == ''){
-            showStream();
+            showStream();     
         }
+        
     })
 
+    console.log(streams.length);
+
     var showStream = async () => {
+        setPrevAccount(account);
         var listcount = await LoanVault.getCount();
         listcount = listcount.toString();
         setStreamCount(listcount);
+        setStreamid([])
         setStreams([])
         for(let i=1;i<=listcount;i++){
             var stream = await LoanVault.getStream(i);
             if(account.toString() == stream.recipient){
                 setStreams((streams)=>[...streams,stream])
+                setStreamid((ids)=>[...ids,i]);
             }
-        }
-        
+        }        
     }
-
-
-    console.log(streamCount)
 
     return ( 
         <div className='flex flex-col w-full h-[45%] ml-14 mt-10 bg-slate-100 rounded-xl p-12' >
