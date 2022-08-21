@@ -11,7 +11,7 @@ const Individual = () => {
             <IncomingStream/>
             <Spent/>
             </div>
-            <div className='flex flex-col h-fit w-[40%] items-center justifu-center' >
+            <div className='flex flex-col h-fit w-[40%] items-center justify-center' >
                 <Withdraw/>
                 <Borrow/>
             </div>
