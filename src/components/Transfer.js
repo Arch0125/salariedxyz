@@ -17,7 +17,7 @@ import {
     Button,
   } from '@chakra-ui/react'
 
-const Withdraw = () => {
+const Transfer = () => {
 
     const LoanVault = GetContract('0x28d86c43fb4cC880f06A991050045Fe755F7313A',LoanVaultABI);
     const[streamid,setStreamid]=useState([]);
@@ -25,6 +25,7 @@ const Withdraw = () => {
     const[prevAccount,setPrevAccount]=useState('');
     const[amount,setAmount]=useState('');
     const[withdrawamt,setWithdrawamt]=useState('0');
+    const[receiver,setReceiver]=useState('');
     const[date,setDate]=useState('');
     const[sid,setSid]=useState('');
     const account = GetAccount();
@@ -58,21 +59,14 @@ const Withdraw = () => {
         setDate(Date().toLocaleString())
     }
 
-    const withdraw=async(sid)=>{
-        var tx = await LoanVault.withdrawFromStream(sid);
+    const sendFromStream=async(sid,withdrawamt,receiver)=>{
+        var tx = await LoanVault.sendFromStream(sid,ethers.utils.parseEther(withdrawamt),ethers.utils.getAddress(receiver));
         console.log(tx);
-        setAmount('--')
-    }
-
-    const partWithdraw=async(sid,withdrawamt)=>{
-        var tx = await LoanVault.partWithdrawFromStream(sid,ethers.utils.parseEther(withdrawamt));
-        console.log(tx);
-        setAmount('--')
     }
 
     return ( 
-        <div className='flex flex-col w-[80%] h-fit ml-14 bg-slate-100 text-slate-900 roundede-xl p-5 rounded-xl ' >
-            <p className='text-xl font-bold ' >Withdraw Funds</p>
+        <div className='flex flex-col w-[80%] h-fit ml-14 bg-slate-100 text-slate-900 roundede-xl p-5 rounded-xl mt-6' >
+            <p className='text-xl font-bold ' >Transfer Funds</p>
             <hr className='mt-2'/>
 
             <Menu>
@@ -92,16 +86,16 @@ const Withdraw = () => {
             
             <p className='text-lg' >Available Stream Amount : {amount}</p>
             <p className='text-lg' > At Date & Time : {date}</p>
-            <div className='flex flex-row w-full h-fit items-center justify-center mt-6' >
+            <input className='w-full h-fit p-2 rounded-xl' onChange={(e)=>setReceiver(e.target.value)} placeholder={"Receiver Address"} />
+            <div className='flex flex-row w-full h-fit items-center justify-center mt-2' >
             <input className='w-full h-fit p-2 rounded-l-xl' type={"number"}  onChange={(e)=>setWithdrawamt(e.target.value)} placeholder={withdrawamt} value={withdrawamt} />
             <button className='flex h-full p-2 items-center justify-center bg-slate-900 text-white rounded-r-xl' onClick={()=>setWithdrawamt(amount)} >MAX</button>
             </div>
-            <button className='w-full bg-slate-900 rounded-xl text-white p-2 mt-2' onClick={()=>partWithdraw(sid,withdrawamt)} >Withdraw</button>  
-            <button className='w-full bg-slate-900 rounded-xl text-white p-2 mt-4' onClick={()=>withdraw(sid)} >Instant Full Withdraw</button>    
+            <button className='w-full bg-slate-900 rounded-xl text-white p-2 mt-2' onClick={()=>sendFromStream(sid,withdrawamt,receiver)} >Transfer</button>  
             <hr className='' />      
         </div>
 
      );
 }
  
-export default Withdraw;
+export default Transfer;
