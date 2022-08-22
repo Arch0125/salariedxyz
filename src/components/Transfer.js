@@ -30,12 +30,6 @@ const Transfer = () => {
     const[sid,setSid]=useState('');
     const account = GetAccount();
 
-    useEffect(()=>{
-        if(streamCount == ''){
-            showStream();     
-        }
-    })
-
     var showStream = async () => {
         setPrevAccount(account);
         var listcount = await LoanVault.getCount();
@@ -70,7 +64,7 @@ const Transfer = () => {
             <hr className='mt-2'/>
 
             <Menu>
-                <MenuButton as={Button} >
+                <MenuButton as={Button} onClick={showStream} >
                    {sid?<label>Stream ID {sid}</label> :<label>Select Stream</label>}
                     
                 </MenuButton>
