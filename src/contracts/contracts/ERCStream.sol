@@ -23,8 +23,33 @@ contract Vault {
         uint256 timeframe;
     }
 
+    struct OrgDetail{
+        string name;
+        address admin;
+    }
+
+    struct Member{
+        address memberaddr;
+        address admin;
+        string position;
+    }
+
+    struct Outgoing{
+        uint _streamid;
+        uint amount;
+        address recipient;
+        address sender;
+    }
+
     mapping(uint256 => Stream) public streams;
+    mapping(address => OrgDetail) public orgdetails;
     mapping(address => uint256) public orgbalance;
+    mapping(address => uint256) public orgcount;
+    mapping(address => Member) public members;
+    mapping(uint256 => uint256) public withdrawamt;
+    mapping(uint256 => Outgoing)public outgoings;
+
+    Member[] public memberDetails;
 
     function addFund(uint _amount)public{
         _amount*=1e18;
@@ -41,6 +66,17 @@ contract Vault {
         token.transfer(msg.sender,_amount);
     }
 
+    function addMember(string memory _position, address member)public{
+        members[msg.sender].memberaddr=member;
+        members[msg.sender].position=_position;
+        members[msg.sender].admin = msg.sender;
+        memberDetails.push(members[msg.sender]);
+    }
+
+    function registerDAO(string memory _name)public {
+        orgdetails[msg.sender]=OrgDetail(_name,msg.sender);
+    }
+
     function createStream(address sender, address recepient, address tokenAddress, uint256 amount, uint256 timeframe) public returns(Stream memory){
         streamid++;
         require(sender != recepient, 'You cant stream to yourself');
@@ -48,6 +84,7 @@ contract Vault {
         require(balanceOf[msg.sender] >= amount, 'Vault balance must be reateer than the streaming amount');
         uint256 rate = (amount * 1e18 )/2629743;
         streams[streamid]=Stream(sender,recepient,tokenAddress,amount,rate,timeframe);
+        orgcount[msg.sender]++;
         return streams[streamid];
     }
 
@@ -56,46 +93,69 @@ contract Vault {
         uint256 starttime = streams[_streamid].timeframe;
         uint256 currenttime = block.timestamp;
         uint256 timepassed = currenttime - starttime;
-        uint256 balance = timepassed * rate;
+        uint256 withdrawal = withdrawamt[_streamid];
+        uint256 balance = (timepassed * rate)-withdrawal;
         return balance;
     }
 
-    function withdrawStream(uint _streamid)public {
-        require(msg.sender == streams[_streamid].recipient, 'only recipient can call the function');
-        uint rate = streams[_streamid].rate;
-        uint256 starttime = streams[_streamid].timeframe;
-        uint256 currenttime = block.timestamp;
-        uint256 timepassed = currenttime - starttime;
-        uint withdraw = rate * timepassed;
-        token.transfer(msg.sender, rate * timepassed);
-        totalSupply-=withdraw;
-        orgbalance[msg.sender]-=withdraw;
-        streams[_streamid].timeframe=block.timestamp;
-    }
-
     function withdrawFromStream(uint _streamid)public{
-        require(msg.sender == streams[_streamid].recipient, 'only recipient can call the function');
+        require(msg.sender == streams[_streamid].recipient, 'Only recipient can call the withdraw');
         uint256 rate = streams[_streamid].rate;
         uint256 starttime = streams[_streamid].timeframe;
         uint256 timepass = block.timestamp - starttime;
         token.transfer(msg.sender, rate*timepass);
-        totalSupply-=rate*timepass;
-        orgbalance[streams[_streamid].sender]-=rate*timepass;
-        streams[_streamid].amount -= rate * timepass;
+        totalSupply-=(rate*timepass);
+        streams[_streamid].timeframe = block.timestamp;
+        orgbalance[streams[_streamid].sender]-=rate * timepass;
     }
 
-    function sendFromStream(uint _withdraw,uint _streamid)public{
-        _withdraw*=1e18;
-        require(_withdraw<(streams[_streamid].amount)/2);
-        token.transfer(msg.sender,_withdraw);
-        uint256 currenttime = block.timestamp;
-        streams[_streamid].timeframe=currenttime;
-        streams[_streamid].rate = ((streams[_streamid].amount-_withdraw) * 1e18 )/2629743;
-        totalSupply-=_withdraw;
-        orgbalance[streams[_streamid].sender]-=_withdraw;
+    function partWithdrawFromStream(uint _streamid,uint _amount)public{
+        require(msg.sender == streams[_streamid].recipient, 'Only recipient can call the withdraw');
+        token.transfer(msg.sender, _amount);
+        totalSupply-=_amount;
+        orgbalance[streams[_streamid].sender]-=_amount;
+        withdrawamt[_streamid]+=_amount;
+    }
+
+     function sendFromStream(uint _streamid,uint _amount, address _recipient)public{
+        require(msg.sender == streams[_streamid].recipient, 'Only recipient can call the withdraw');
+        token.transfer(_recipient, _amount);
+        totalSupply-=_amount;
+        orgbalance[streams[_streamid].sender]-=_amount;
+        withdrawamt[_streamid]+=_amount;
+        outgoings[_streamid]=Outgoing(_streamid,_amount,_recipient,msg.sender);
+    }
+
+    function getStream(uint256 _streamid)public view returns(Stream memory){
+        return streams[_streamid];
+    }   
+
+    function getOutgoing(uint256 _streamid)public view returns(Outgoing memory){
+        return outgoings[_streamid];
+    }
+
+    function getCount() public view returns(uint256){
+        return streamid;
+    }
+
+    function getFund(address _owner)public view returns(uint256){
+        return orgbalance[_owner];
+    }
+
+    function getOrgCount(address _owner)public view returns(uint256){
+        return orgcount[_owner];
+    }
+
+    function getName()public view returns(string memory){
+        return orgdetails[msg.sender].name;
+    }
+
+    function showMember()public view returns(Member[] memory){
+        return memberDetails;
     }
     
 }
+
  interface IERC20 {
     function totalSupply() external view returns (uint);
 
