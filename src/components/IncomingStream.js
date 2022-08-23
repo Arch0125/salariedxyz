@@ -7,18 +7,11 @@ import GetAccount from '../hooks/GetAccount';
 const IncomingStream = () => {
 
     const account = GetAccount();
-    const LoanVault = GetContract('0x28d86c43fb4cC880f06A991050045Fe755F7313A',LoanVaultABI);
+    const LoanVault = GetContract('0x9aD737632C0f69F3a32F502Fc17E8eC02D35F351',LoanVaultABI);
     const[streams,setStreams]=useState([]);
     const[streamid,setStreamid]=useState('');
     const[streamCount,setStreamCount]=useState('');
     const[prevAccount,setPrevAccount]=useState('');
-
-    useEffect(()=>{
-        if(streamCount == ''){
-            showStream();     
-        }
-        
-    })
 
     console.log(streams.length);
 
@@ -42,6 +35,7 @@ const IncomingStream = () => {
         <div className='flex flex-col w-full h-[45%] ml-14 mt-10 bg-slate-100 rounded-xl p-12' >
             <div className='w-full flex flex-row justify-between items-end '>
             <p className='text-xl text-slate-900 font-semibold' >Incoming streams</p>
+            <button className='bg-slate-900 text-white px-3 text-md py-1 rounded-xl' onClick={showStream} >Refresh</button>
             </div>
             <hr className='mt-2 mb-2 border-slate-900' />
             {streams.length ?

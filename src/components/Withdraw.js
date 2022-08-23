@@ -19,7 +19,7 @@ import {
 
 const Withdraw = () => {
 
-    const LoanVault = GetContract('0x28d86c43fb4cC880f06A991050045Fe755F7313A',LoanVaultABI);
+    const LoanVault = GetContract('0x9aD737632C0f69F3a32F502Fc17E8eC02D35F351',LoanVaultABI);
     const[streamid,setStreamid]=useState([]);
     const[streamCount,setStreamCount]=useState('');
     const[prevAccount,setPrevAccount]=useState('');
@@ -28,12 +28,6 @@ const Withdraw = () => {
     const[date,setDate]=useState('');
     const[sid,setSid]=useState('');
     const account = GetAccount();
-
-    useEffect(()=>{
-        if(streamCount == ''){
-            showStream();     
-        }
-    })
 
     var showStream = async () => {
         setPrevAccount(account);
@@ -76,7 +70,7 @@ const Withdraw = () => {
             <hr className='mt-2'/>
 
             <Menu>
-                <MenuButton as={Button} >
+                <MenuButton as={Button} onClick={showStream} >
                    {sid?<label>Stream ID {sid}</label> :<label>Select Stream</label>}
                     
                 </MenuButton>
