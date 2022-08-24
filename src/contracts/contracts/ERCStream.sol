@@ -13,6 +13,7 @@ contract Vault {
     }
 
     uint256 streamid=0;
+    uint256 outgoingid=0;
 
     struct Stream {
         address sender;
@@ -119,11 +120,12 @@ contract Vault {
 
      function sendFromStream(uint _streamid,uint _amount, address _recipient)public{
         require(msg.sender == streams[_streamid].recipient, 'Only recipient can call the withdraw');
+        ++outgoingid;
         token.transfer(_recipient, _amount);
         totalSupply-=_amount;
         orgbalance[streams[_streamid].sender]-=_amount;
         withdrawamt[_streamid]+=_amount;
-        outgoings[_streamid]=Outgoing(_streamid,_amount,_recipient,msg.sender);
+        outgoings[outgoingid]=Outgoing(_streamid,_amount,_recipient,msg.sender);
     }
 
     function getStream(uint256 _streamid)public view returns(Stream memory){
@@ -136,6 +138,10 @@ contract Vault {
 
     function getCount() public view returns(uint256){
         return streamid;
+    }
+
+    function getOutgoingCount() public view returns(uint256){
+        return outgoingid;
     }
 
     function getFund(address _owner)public view returns(uint256){

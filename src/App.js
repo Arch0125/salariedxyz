@@ -5,6 +5,8 @@ import Organization from './pages/Organization';
 import Navbar from './components/Navbar';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Individual from './pages/Individual';
+import Loan from './pages/Loan';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -16,7 +18,9 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/organization" element={<Organization />} />
         <Route path="/individual" element={<Individual />} />
+        <Route path="/loan" element={<Loan />} />
       </Routes>
+      
     </BrowserRouter>
    );
 }
