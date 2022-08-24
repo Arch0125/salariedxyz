@@ -1,5 +1,6 @@
 import React from 'react';
 import Framework from '@superfluid-finance/sdk-core';
+import Footer from './components/Footer';
 
 const Homepage = () => {
     return ( 
@@ -25,6 +26,7 @@ const Homepage = () => {
                     <a href='/organization' ><button className='p-3 bg-white text-slate-900 text-xl font-medium rounded-full' >Onboard as DAO/Organization 🌐</button></a>
                     <a href='/individual' ><button className='p-3 bg-white text-slate-900 text-xl font-medium rounded-full ml-4' >Onboard as an Individual 👤 </button></a>
                 </div>
+            <Footer/>
         </div>  
      );
 }
