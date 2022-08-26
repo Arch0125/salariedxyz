@@ -6,6 +6,7 @@ contract Vault {
 
     uint public totalSupply;
     uint256 timepass;
+    uint256 poolid;
     mapping(address => uint) public balanceOf;
 
     constructor(address _token) {
@@ -42,6 +43,12 @@ contract Vault {
         address sender;
     }
 
+    struct StreamPool{
+        uint256 rate;
+        uint256 totalBalance;
+        address tokenAddress;
+    }
+
     mapping(uint256 => Stream) public streams;
     mapping(address => OrgDetail) public orgdetails;
     mapping(address => uint256) public orgbalance;
@@ -49,6 +56,10 @@ contract Vault {
     mapping(address => Member) public members;
     mapping(uint256 => uint256) public withdrawamt;
     mapping(uint256 => Outgoing)public outgoings;
+
+    //Mapping for Liquidity Pool
+    mapping(uint256 => StreamPool)public streampools;
+    mapping(address=>uint256)public poolshare;
 
     Member[] public memberDetails;
 
@@ -127,6 +138,55 @@ contract Vault {
         withdrawamt[_streamid]+=_amount;
         outgoings[outgoingid]=Outgoing(_streamid,_amount,_recipient,msg.sender);
     }
+
+    //Functions for Stream Lending Pool
+    //Currently Supporting DAI tokens only
+
+    function addLiquidity(uint256 _id, uint256 _amount) public {
+        require(_amount != 0,"Amount cannot be zero");
+        require(_id <= poolid,"Pool should Exist");
+        //Update Balance 
+        updateBalance(_id);
+        //Increase Balance of the Pool
+        streampools[_id].totalBalance+=_amount;
+        //transfer funds from msg.sender to the contract
+        token.transferFrom(msg.sender,address(this),_amount);
+        //Mint shares for the liquidity provider
+        calculateShares(_id,_amount);
+    }
+
+    //Remove Liquidity Fucntion 
+    function removeLiquidity(uint256 _id) public {
+        //update Balance of pool
+        updateBalance(_id);
+        uint256 share = poolshare[msg.sender];
+        //Calculating amount from shares of the LP
+        uint256 amount = (share * streampools[_id].totalBalance)/100;
+        //Transferring tokens from pool to LP
+        token.transfer(msg.sender,amount);
+        //Update shares of the LP
+        calculateShares(_id,amount);
+        //update total balance of loan pool
+        streampools[_id].totalBalance-=amount;
+    }
+
+    //Share calculating function for the LP
+    function calculateShares(uint _poolid, uint256 _amount)public{
+        require(_amount !=0,"Amount cannot be zero");
+        uint256 shares =(_amount * 100/streampools[_poolid].totalBalance);
+        poolshare[msg.sender]=shares;
+    }
+
+    //Update fucntion for updating the total balance of the pool
+    function updateBalance(uint256 _id) public {
+        //Interest will be calculated from repayment Stream
+        uint256 interest = 0;
+        uint256 updatedBalance = interest + streampools[_id].totalBalance;
+        streampools[_id].totalBalance+=updatedBalance;
+    }
+
+
+    //View Functions for both Stream and StreamPool
 
     function getStream(uint256 _streamid)public view returns(Stream memory){
         return streams[_streamid];
