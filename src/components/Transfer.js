@@ -19,7 +19,7 @@ import {
 
 const Transfer = () => {
 
-    const LoanVault = GetContract('0x9aD737632C0f69F3a32F502Fc17E8eC02D35F351',LoanVaultABI);
+    const LoanVault = GetContract('0x55D40f2ba3804C2372d40835A9E2a882d2133D3d',LoanVaultABI);
     const[streamid,setStreamid]=useState([]);
     const[streamCount,setStreamCount]=useState('');
     const[prevAccount,setPrevAccount]=useState('');

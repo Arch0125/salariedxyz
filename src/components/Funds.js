@@ -27,10 +27,10 @@ const Funds = () => {
     const[token,setToken]=useState('Choose Token');
     const[amount,setAmount]=useState('');
     const DAI = GetContract('0xE562db698CcE116169813d531e8C03A23276315c',daiABI);
-    const LoanVault = GetContract('0x9aD737632C0f69F3a32F502Fc17E8eC02D35F351',LoanVaultABI);
+    const LoanVault = GetContract('0x55D40f2ba3804C2372d40835A9E2a882d2133D3d',LoanVaultABI);
 
     const approve = async () => {
-        await DAI.approve('0x9aD737632C0f69F3a32F502Fc17E8eC02D35F351',ethers.utils.parseEther(amount));
+        await DAI.approve('0x55D40f2ba3804C2372d40835A9E2a882d2133D3d',ethers.utils.parseEther(amount));
     }
 
     const addfunds = async () => {
