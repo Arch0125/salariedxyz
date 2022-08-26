@@ -142,22 +142,47 @@ contract Vault {
     //Functions for Stream Lending Pool
     //Currently Supporting DAI tokens only
 
-
     function addLiquidity(uint256 _id, uint256 _amount) public {
         require(_amount != 0,"Amount cannot be zero");
         require(_id <= poolid,"Pool should Exist");
+        //Update Balance 
+        updateBalance(_id);
         //Increase Balance of the Pool
         streampools[_id].totalBalance+=_amount;
         //transfer funds from msg.sender to the contract
-        token.atransferFrom(msg.sender,address(this),_amount);
+        token.transferFrom(msg.sender,address(this),_amount);
         //Mint shares for the liquidity provider
         calculateShares(_id,_amount);
     }
 
+    //Remove Liquidity Fucntion 
+    function removeLiquidity(uint256 _id) public {
+        //update Balance of pool
+        updateBalance(_id);
+        uint256 share = poolshare[msg.sender];
+        //Calculating amount from shares of the LP
+        uint256 amount = (share * streampools[_id].totalBalance)/100;
+        //Transferring tokens from pool to LP
+        token.transfer(msg.sender,amount);
+        //Update shares of the LP
+        calculateShares(_id,amount);
+        //update total balance of loan pool
+        streampools[_id].totalBalance-=amount;
+    }
+
+    //Share calculating function for the LP
     function calculateShares(uint _poolid, uint256 _amount)public{
         require(_amount !=0,"Amount cannot be zero");
         uint256 shares =(_amount * 100/streampools[_poolid].totalBalance);
         poolshare[msg.sender]=shares;
+    }
+
+    //Update fucntion for updating the total balance of the pool
+    function updateBalance(uint256 _id) public {
+        //Interest will be calculated from repayment Stream
+        uint256 interest = 0;
+        uint256 updatedBalance = interest + streampools[_id].totalBalance;
+        streampools[_id].totalBalance+=updatedBalance;
     }
 
 
