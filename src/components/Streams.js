@@ -25,7 +25,7 @@ const Streams = () => {
     const[rate,setRate]=React.useState(0);
     const[streams,setStreams]=React.useState([]);
     const account = GetAccount();
-    const LoanVault = GetContract('0x483cD4bFB39298D84CB8e754b98a15A31FcAbBfE',LoanVaultABI);
+    const LoanVault = GetContract('0xb0B2D1196d93BC9371140932E9f188948b6ac824',LoanVaultABI);
 
     var time = (((new Date()).getTime()).toString().slice(0, -3));
 
