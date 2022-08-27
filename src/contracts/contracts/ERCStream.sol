@@ -60,6 +60,7 @@ contract Vault {
     //Mapping for Liquidity Pool
     mapping(uint256 => StreamPool)public streampools;
     mapping(address=>uint256)public poolshare;
+    mapping(address => uint256) public pooldeposit;
 
     Member[] public memberDetails;
 
@@ -140,19 +141,22 @@ contract Vault {
     }
 
     //Functions for Stream Lending Pool
-    //Currently Supporting DAI tokens only
 
+    //Currently Supporting DAI tokens only
     function addLiquidity(uint256 _id, uint256 _amount) public {
         require(_amount != 0,"Amount cannot be zero");
         require(_id <= poolid,"Pool should Exist");
         //Update Balance 
-        updateBalance(_id);
+        //updateBalance(_id);
         //Increase Balance of the Pool
-        streampools[_id].totalBalance+=_amount;
+        uint currentbal = streampools[_id].totalBalance + _amount;
+        streampools[_id].totalBalance=currentbal;
         //transfer funds from msg.sender to the contract
         token.transferFrom(msg.sender,address(this),_amount);
         //Mint shares for the liquidity provider
-        calculateShares(_id,_amount);
+        calculateShares(_id,currentbal);
+        //Mapping for pool deposit
+        pooldeposit[msg.sender]+=_amount;
     }
 
     //Remove Liquidity Fucntion 
@@ -168,6 +172,8 @@ contract Vault {
         calculateShares(_id,amount);
         //update total balance of loan pool
         streampools[_id].totalBalance-=amount;
+        //Mapping for pool deposit
+        pooldeposit[msg.sender]-=amount;
     }
 
     //Share calculating function for the LP
@@ -186,8 +192,7 @@ contract Vault {
     }
 
 
-    //View Functions for both Stream and StreamPool
-
+    //View Functions for both Stream
     function getStream(uint256 _streamid)public view returns(Stream memory){
         return streams[_streamid];
     }   
@@ -219,6 +224,19 @@ contract Vault {
     function showMember()public view returns(Member[] memory){
         return memberDetails;
     }
+
+    //View functions for StreamPool
+    function getPoolBalance(uint _id)public view returns(uint){
+        return streampools[_id].totalBalance;
+    }
+
+    //returns shares of the LP
+    function getShare(uint _poolid)public view returns(uint){
+        uint share = (pooldeposit[msg.sender]*100)/streampools[_poolid].totalBalance;
+        return share;
+    }
+
+
     
 }
 

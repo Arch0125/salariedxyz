@@ -7,7 +7,7 @@ import GetAccount from '../hooks/GetAccount';
 const OutgoingTransfers = () => {
 
     const account = GetAccount();
-    const LoanVault = GetContract('0xE5EF226f9b8Aebdd7678166c35BedF3F9ffcFc38',LoanVaultABI);
+    const LoanVault = GetContract('0x483cD4bFB39298D84CB8e754b98a15A31FcAbBfE',LoanVaultABI);
     const[streams,setStreams]=useState([]);
     const[streamCount1,setStreamCount1]=useState('');
     const[prevAccount,setPrevAccount]=useState('');
