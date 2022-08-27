@@ -23,7 +23,7 @@ const Homepage = () => {
             </div>
                 <p className='text-2xl font-bold mt-14' >Get Started with Streaming</p>
                 <div className='flex flex-row h-fit w-fit mt-5'  >
-                    <a href='/organization' ><button className='p-3 bg-white text-slate-900 text-xl font-medium rounded-full' >Onboard as DAO/Organization 🌐</button></a>
+                    <a href='/Onboarding' ><button className='p-3 bg-white text-slate-900 text-xl font-medium rounded-full' >Onboard as DAO/Organization 🌐</button></a>
                     <a href='/individual' ><button className='p-3 bg-white text-slate-900 text-xl font-medium rounded-full ml-4' >Onboard as an Individual 👤 </button></a>
                 </div>
             <Footer/>
