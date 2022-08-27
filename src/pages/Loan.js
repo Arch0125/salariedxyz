@@ -2,6 +2,7 @@ import React from 'react';
 import Borrow from '../components/Borrow';
 import Liquidity from '../components/AddLiquidity';
 import PoolDetails from '../components/PoolDetails';
+import Advanced from '../components/Advanced';
 
 const Loan = () => {
     return ( 
@@ -9,7 +10,7 @@ const Loan = () => {
             <PoolDetails/>
             <div className='flex flex-row w-[90%] h-fit justify-between' >
                 <Borrow/>
-                <Liquidity/>
+                <Advanced/>
             </div>
         </div>
      );

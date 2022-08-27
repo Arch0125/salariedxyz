@@ -16,7 +16,7 @@ const Dashboard = () => {
     const[streamCount,setStreamCount]=useState('');
     const account = GetAccount();
     const DAI = GetContract('0xE562db698CcE116169813d531e8C03A23276315c',daiABI);
-    const LoanVault = GetContract('0xb0B2D1196d93BC9371140932E9f188948b6ac824',LoanVaultABI);
+    const LoanVault = GetContract('0x212B73ca2774A2f271fE4DA4F2F25973ed2DC516',LoanVaultABI);
 
 
     const checkBalance = async () => {
