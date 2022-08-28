@@ -3,11 +3,13 @@ import { SBTabi } from './SBTABI';
 import GetContract from '../hooks/GetContract';
 import { ethers } from 'ethers';
 import LoanVaultABI from '../ABIs/LoanVaultABI.json'
+import { useState } from 'react';
 
 const MintDAO = () => {
 
     const[id,setId]=React.useState('');
     const[daoname,setDaoname]=React.useState('');   
+    const[items,setItems]=useState('');
 
     const SBT = GetContract('0x83843047A53edEc47A42e3BaC427FA01390C2c2f', SBTabi);
     const LoanVault = GetContract('0x212B73ca2774A2f271fE4DA4F2F25973ed2DC516',LoanVaultABI);
@@ -23,6 +25,14 @@ const MintDAO = () => {
         const name = await LoanVault.registerDAO(daoname);
         setDaoname(name);
     }
+
+    const getData = async () => {
+        const response = await fetch("https://api.covalenthq.com/v1/80001/tokens/0x83843047A53edEc47A42e3BaC427FA01390C2c2f/token_holders/?key=ckey_ed0af45f6c99493486cf9b47e54")
+        const data = response.json()
+        console.log(data)
+   }
+
+   getData();
 
     return ( 
         <div className='flex flex-col w-screen h-screen bg-hero items-center justify-center ' >
