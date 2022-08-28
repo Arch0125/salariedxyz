@@ -4,13 +4,14 @@ import GetContract from '../hooks/GetContract';
 import { ethers } from 'ethers';
 import LoanVaultABI from '../ABIs/LoanVaultABI.json'
 import { useState } from 'react';
+import { ImageUpload } from 'react-ipfs-uploader'
 
 const MintDAO = () => {
 
     const[id,setId]=React.useState('');
     const[daoname,setDaoname]=React.useState('');   
     const[items,setItems]=useState('');
-
+    const [imageUrl, setImageUrl] = useState('')
     const SBT = GetContract('0x83843047A53edEc47A42e3BaC427FA01390C2c2f', SBTabi);
     const LoanVault = GetContract('0x212B73ca2774A2f271fE4DA4F2F25973ed2DC516',LoanVaultABI);
 
@@ -45,6 +46,16 @@ const MintDAO = () => {
                 <input  className='w-full h-fit mt-6 bg-transparent border-2 border-opacity-10 rounded-xl p-3  ' placeholder='Stream Admin' />
                 <input className='w-full h-fit mt-6 bg-transparent border-2 border-opacity-10 rounded-xl p-3  ' placeholder='Add Token ID' onChange={(e)=>setId(e.target.value)} />
                 <button className='w-full h-fit mt-6 bg-white text-slate-900 rounded-xl p-3' onClick={()=>mintsbt(id)} >Mint SBT</button>
+                <div className='mt-10' >
+                <ImageUpload setUrl={setImageUrl} />
+                    ImageUrl : <a
+                        href={imageUrl}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
+                        {imageUrl}
+                </a>
+                </div>
             </div>
         </div>
      );
