@@ -8,6 +8,7 @@ import Individual from './pages/Individual';
 import Loan from './pages/Loan';
 import Footer from './components/Footer';
 import Onboarding from './pages/Onboarding';
+import MintDAO from './pages/MintDAO';
 
 function App() {
   return (
@@ -17,11 +18,12 @@ function App() {
     </div>
       <Routes>
         <Route path="/" element={<Homepage />} />
+        <Route path='/organization' element={<Organization />} />
         <Route path="/Onboarding" element={<Onboarding />} />
         <Route path="/individual" element={<Individual />} />
         <Route path="/loan" element={<Loan />} />
-      </Routes>
-      
+        <Route path='/mintdao' element={<MintDAO/>} />
+      </Routes>     
     </BrowserRouter>
    );
 }

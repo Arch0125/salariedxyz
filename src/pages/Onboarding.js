@@ -51,7 +51,7 @@ $41,885,192.06
       <div className="flex mt-4  text-white flex-col  ">
 
 <button className="bg-transparent w-1/6 mx-auto hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-purple-500 hover:border-transparent rounded">
-  Mint NFTs
+  <a href="/mintdao" >Mint NFTs</a>
 </button>
 </div>
       
