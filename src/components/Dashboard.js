@@ -14,9 +14,10 @@ const Dashboard = () => {
     const[bal,setBal]=useState('');
     const[daoname,setDaoName]=useState('');
     const[streamCount,setStreamCount]=useState('');
+    const[admin,setAdmin]=useState('');
     const account = GetAccount();
     const DAI = GetContract('0xE562db698CcE116169813d531e8C03A23276315c',daiABI);
-    const LoanVault = GetContract('0x212B73ca2774A2f271fE4DA4F2F25973ed2DC516',LoanVaultABI);
+    const LoanVault = GetContract('0x9A04413240374313901d69041d00C8d9FBAd8c2f',LoanVaultABI);
 
 
     const checkBalance = async () => {
@@ -31,6 +32,12 @@ const Dashboard = () => {
         setDaoName(orgname);
     }
 
+    const getAdmin = async()=>{
+        const orgadmin = await LoanVault.getAdmin();
+        console.log(orgadmin);
+        setAdmin(orgadmin);
+    }
+
     const getstreamCount=async()=>{
         const count = await LoanVault.getOrgCount(account);
         setStreamCount(count.toString());
@@ -40,11 +47,12 @@ const Dashboard = () => {
     checkBalance();
     getName();
     getstreamCount();
+    getAdmin();
 
 
     return ( 
-        <>
-        <div className='flex flex-col w-[80%] bg-white rounded-xl h-fit p-5 text-slate-900 '  >
+        <div className='flex flex-col w-screen h-screen justify-center items-center' >
+        <div className='flex flex-col w-[80%] bg-white rounded-xl h-fit p-4 text-slate-900 '  >
             <p className='text-xl font-bold ' >Organization & DAO Details</p>
             
         </div>
@@ -53,13 +61,13 @@ const Dashboard = () => {
                 <p className='text-xl font-semibold' >DAO/Organization Info</p>
                 <hr className='mt-2' />
                 <p className='font-medium mt-2'>Name : {daoname}</p>
-                <p className='font-medium'>Stream Admin : </p>
+                <p className='font-medium'>Stream Admin : {((admin).toString()).slice(0,7)}...{((admin).toString()).slice(38)}</p>
                 <p className='font-medium'>Members Streamed : </p>
                 <hr className='mt-2' />
                 <button className='w-full h-fit p-2 mt-2 bg-slate-900 text-white rounded-xl' onClick={()=>setChoice(1)} >Edit Details</button>
             </div>
             <div className='flex flex-col w-[30%] bg-white rounded-xl h-full p-5 text-slate-900 '>
-                <p className='text-xl font-semibold' >Total Value Locked</p>
+                <p className='text-xl font-semibold' >Treasury</p>
                 <hr className='mt-2' />
                 <p className='font-medium mt-2'>USDC : --</p>
                 <p className='font-medium'>DAI : {bal.slice(0,-18)}</p>
@@ -82,7 +90,7 @@ const Dashboard = () => {
             choice===0?<p className='mt-14 text-3xl font-bold'>Click on any button to get started</p>:choice===1?<Details/>:choice===2?<Funds/>:<Streams/>
         }
         </div>
-        </>
+        </div>
      );
 }
  

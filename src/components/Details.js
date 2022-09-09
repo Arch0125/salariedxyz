@@ -8,7 +8,7 @@ import { useState } from 'react';
 const Details = () => {
     
     const[daoname,setDaoname]=useState('');
-    const LoanVault = GetContract('0x212B73ca2774A2f271fE4DA4F2F25973ed2DC516',LoanVaultABI);
+    const LoanVault = GetContract('0x9A04413240374313901d69041d00C8d9FBAd8c2f',LoanVaultABI);
     const account = GetAccount();
 
     const setName = async()=>{

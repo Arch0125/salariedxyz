@@ -18,19 +18,19 @@ import { Contract, ethers } from 'ethers';
 
 const Streams = () => {
 
-    const[duration,setDuration]=React.useState('Duration');
+    const[duration,setDuration]=React.useState('');
     const[token,setToken]=React.useState('Choose Token');
     const[recipient,setRecipient]=React.useState('');
     const[amount,setAmount]=React.useState('');
     const[rate,setRate]=React.useState(0);
     const[streams,setStreams]=React.useState([]);
     const account = GetAccount();
-    const LoanVault = GetContract('0x212B73ca2774A2f271fE4DA4F2F25973ed2DC516',LoanVaultABI);
+    const LoanVault = GetContract('0x9A04413240374313901d69041d00C8d9FBAd8c2f',LoanVaultABI);
 
     var time = (((new Date()).getTime()).toString().slice(0, -3));
 
     const addStream = async () => {
-        const tx = await LoanVault.createStream(account.toString(),ethers.utils.getAddress(recipient),'0xE562db698CcE116169813d531e8C03A23276315c',amount,time);
+        const tx = await LoanVault.createStream(account.toString(),ethers.utils.getAddress(recipient),'0xE562db698CcE116169813d531e8C03A23276315c',amount,time,duration);
         console.log(tx);
     }
 
@@ -50,24 +50,24 @@ const Streams = () => {
     
 
     return ( 
-        <div className='flex flex-row w-full h-fit justify-between mt-14' >
+        <div className='flex flex-row w-full h-fit justify-between ' >
             <div className='flex flex-col bg-white w-[48%] h-fit p-5 text-slate-900 rounded-xl' >
                 <p className='text-xl font-bold' >Create new stream</p>
                 <hr className='mt-2 mb-2' />
                 <p className='text-lg font-medium'  >Recipient Address</p>
                 <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>setRecipient(e.target.value)} />
                 <p className='text-lg font-medium' >Amount</p>
-                <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>{setAmount(e.target.value);setRate(e.target.value / 2629743)}}  />
+                <input className='text-black p-2 rounded-xl bg-slate-200' onChange={(e)=>{setAmount(e.target.value);setRate(e.target.value / (duration * 2629743))}}  />
                 <div className='flex flex-row justify-between mt-4' >
                 <Menu>
                 <MenuButton as={Button} width={'33%'} paddingX={"50px"} >
-                    <label>{duration}</label>
+                    {(duration)?<label>{duration} Months</label>:<label>Duration</label>}
                     
                 </MenuButton>
-                <MenuList>
-                    <MenuItem onClick={(e)=>setDuration('1 Month')} >1 Month</MenuItem>
-                    <MenuItem onClick={(e)=>setDuration('2 Months')} >2 Months</MenuItem>
-                    <MenuItem onClick={(e)=>setDuration('3 Months')} >3 Months</MenuItem>
+                <MenuList onChange={(e)=>{setAmount(e.target.value);setRate(e.target.value / (duration * 2629743))}} >
+                    <MenuItem onClick={(e)=>setDuration('1')} >1 Month</MenuItem>
+                    <MenuItem onClick={(e)=>setDuration('2')} >2 Months</MenuItem>
+                    <MenuItem onClick={(e)=>setDuration('3')} >3 Months</MenuItem>
                 </MenuList>
                 </Menu>
                 <Menu>

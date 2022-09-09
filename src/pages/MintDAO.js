@@ -5,6 +5,8 @@ import { ethers } from 'ethers';
 import LoanVaultABI from '../ABIs/LoanVaultABI.json'
 import { useState } from 'react';
 import { ImageUpload } from 'react-ipfs-uploader'
+import GetAccount from '../hooks/GetAccount';
+import { useWaitForTransaction } from 'wagmi'
 
 const MintDAO = () => {
 
@@ -13,17 +15,22 @@ const MintDAO = () => {
     const[items,setItems]=useState('');
     const [imageUrl, setImageUrl] = useState('')
     const SBT = GetContract('0x83843047A53edEc47A42e3BaC427FA01390C2c2f', SBTabi);
-    const LoanVault = GetContract('0x212B73ca2774A2f271fE4DA4F2F25973ed2DC516',LoanVaultABI);
+    const LoanVault = GetContract('0x9A04413240374313901d69041d00C8d9FBAd8c2f',LoanVaultABI);
+    var account = GetAccount();
+    const[txhash,setTxhash]=useState('');
+
+    const { data, isError, isLoading } = useWaitForTransaction({
+        hash: '0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060',
+      })
 
     const mintsbt = async(id)=>{
         console.log(id)
-        var tx = await SBT.mint(id);
+        var tx = await SBT.mint(id).then(setTxhash(tx.hash));
         setName();
-        console.log(tx);
     }
 
     const setName = async()=>{
-        const name = await LoanVault.registerDAO(daoname);
+        const name = await LoanVault.registerDAO(daoname,ethers.utils.getAddress(account));
         setDaoname(name);
     }
 
@@ -43,18 +50,10 @@ const MintDAO = () => {
                 <label className='text-2xl text-center' >Unique identity for Everyone</label>
                 <hr/>
                 <input  className='w-full h-fit mt-6 bg-transparent border-2 border-opacity-10 rounded-xl p-3  ' placeholder='Company Name' onChange={(e)=>setDaoname(e.target.value)} />
-                <input  className='w-full h-fit mt-6 bg-transparent border-2 border-opacity-10 rounded-xl p-3  ' placeholder='Stream Admin' />
+                <input  className='w-full h-fit mt-6 bg-transparent border-2 border-opacity-10 rounded-xl p-3  ' placeholder='Stream Admin' value={account} />
                 <input className='w-full h-fit mt-6 bg-transparent border-2 border-opacity-10 rounded-xl p-3  ' placeholder='Add Token ID' onChange={(e)=>setId(e.target.value)} />
                 <button className='w-full h-fit mt-6 bg-white text-slate-900 rounded-xl p-3' onClick={()=>mintsbt(id)} >Mint SBT</button>
                 <div className='mt-10' >
-                <ImageUpload setUrl={setImageUrl} />
-                    ImageUrl : <a
-                        href={imageUrl}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                    >
-                        {imageUrl}
-                </a>
                 </div>
             </div>
         </div>

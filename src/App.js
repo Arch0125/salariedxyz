@@ -13,9 +13,7 @@ import MintDAO from './pages/MintDAO';
 function App() {
   return (
     <BrowserRouter>
-    <div className='absolute z-10'>
-      <Navbar/>
-    </div>
+    <Navbar/>
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path='/organization' element={<Organization />} />

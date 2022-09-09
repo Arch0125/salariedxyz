@@ -9,7 +9,7 @@ import { daiABI } from './DAIABI.js';
 
 const AddLiquidity = () => {
 
-    const LoanVault = GetContract('0x212B73ca2774A2f271fE4DA4F2F25973ed2DC516', LoanVaultABI);
+    const LoanVault = GetContract('0x9A04413240374313901d69041d00C8d9FBAd8c2f', LoanVaultABI);
     const DAI = GetContract('0xE562db698CcE116169813d531e8C03A23276315c',daiABI);
     const[amount,setAmount]=useState('');
     const[share,setShare]=useState('');
@@ -33,7 +33,7 @@ const AddLiquidity = () => {
     }
 
     const DAIApprove=async()=>{
-        await DAI.approve('0x212B73ca2774A2f271fE4DA4F2F25973ed2DC516',ethers.utils.parseEther(amount));
+        await DAI.approve('0x9A04413240374313901d69041d00C8d9FBAd8c2f',ethers.utils.parseEther(amount));
     }
 
     return ( 
