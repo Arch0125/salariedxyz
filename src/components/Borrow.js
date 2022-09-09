@@ -19,7 +19,7 @@ import {
 
 const Borrow = () => {
 
-    const LoanVault = GetContract('0x9A04413240374313901d69041d00C8d9FBAd8c2f',LoanVaultABI);
+    const LoanVault = GetContract('0x0b7Bc2Edb26059315d185cE9d23bf72d2ee13EA9',LoanVaultABI);
     const[streamid,setStreamid]=useState([]);
     const[streamCount,setStreamCount]=useState('');
     const[prevAccount,setPrevAccount]=useState('');
@@ -28,6 +28,7 @@ const Borrow = () => {
     const[date,setDate]=useState('');
     const[sid,setSid]=useState('');
     const account = GetAccount();
+    const[lprate,setLprate]=useState('');
 
     var showStream = async () => {
         setPrevAccount(account);
@@ -43,6 +44,12 @@ const Borrow = () => {
         }        
     }
 
+    const getLP=async()=>{
+        var lp = await LoanVault.getLpstream();
+        var lrate = lp[0].toString();
+        setLprate(lrate);
+    }
+
     // const getAmount=async(id)=>{
     //     console.log(id);
     //     var amount = await LoanVault.getStreamBalance(id);
@@ -51,6 +58,8 @@ const Borrow = () => {
     //     setAmount((amount/1e18).toFixed(5));
     //     setDate(Date().toLocaleString())
     // }
+
+    getLP();
 
     const getTotalAmount=async(id)=>{
         var stream = await LoanVault.getStream(id);

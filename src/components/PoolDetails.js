@@ -7,9 +7,10 @@ import { ethers } from 'ethers';
 
 const PoolDetails = () => {
 
-    const LoanVault = GetContract('0x9A04413240374313901d69041d00C8d9FBAd8c2f',LoanVaultABI);
+    const LoanVault = GetContract('0x0b7Bc2Edb26059315d185cE9d23bf72d2ee13EA9',LoanVaultABI);
     const[poolbal,setPoolbal]=useState('');
     const[shares,setShares]=useState('');
+    const[lprate,setLprate]=useState('');
 
     useEffect(()=>{
         getBalance();
@@ -21,6 +22,14 @@ const PoolDetails = () => {
         setPoolbal((bal/1e18).toFixed(5));
         console.log(poolbal)
     }
+
+    const getLP=async()=>{
+        var lp = await LoanVault.getLpstream();
+        var lrate = lp[0].toString();
+        setLprate(lrate);
+    }
+
+    getLP();
     
     return ( 
         <div className='flex flex-col w-[90%] h-fit p-6 bg-white rounded-2xl mb-14 ' >
@@ -30,6 +39,7 @@ const PoolDetails = () => {
                 <div className='flex flex-col w-[30%] h-full text-xl items-center justify-center' >
                     <label className='text-slate-900 font-bold' >Token : <label className='font-normal'>DAI</label> </label>
                     <label className='text-slate-900 font-bold' >Total Balance : <label className='font-normal'>{poolbal}</label> </label>
+                    <label className='text-slate-900 font-bold' >Incoming Repayments : <label className='font-normal'>{lprate}</label> </label>
                     <label className='text-slate-900 font-bold' >Shares Owned : <label className='font-normal'>--</label> </label>
                 </div>
                 <AddLiquidity/>
